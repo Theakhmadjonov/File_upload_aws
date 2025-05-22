@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  username  String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  file      UserFiles?
+
+  @@map("users")
+}
+
+model UserFiles {
+  id        String   @id @default(uuid())
+  imageKey  String
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_files")
+}
+
+model Movie {
+  id          String       @id @default(uuid())
+  title       String
+  slug        String
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  files       MovieFiles[]
+
+  @@map("movies")
+}
+
+model MovieFiles {
+  id        String   @id @default(uuid())
+  movieKey  String
+  movieUrl  String
+  movieId   String   
+  movie     Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@map("movie_files")
+}
+
+model Book {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  page        Int
+  price       Decimal
+  book_image  String
+  book_date   DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("books")
+}
